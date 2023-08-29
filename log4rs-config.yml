@@ -1,0 +1,89 @@
+appenders:
+  # Appender for the post logger
+  post-appender:
+    kind: rolling_file
+    path: logs/posts/post.log
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} | {({l}):5.5} | {f}:{L} — {m}{n}"
+    policy:
+      trigger:
+        kind: size
+        limit: 30 mb
+      roller:
+        kind: fixed_window
+        pattern: logs/posts/post_{}.gz
+        count: 5
+        base: 1
+
+  login-appender:
+    kind: rolling_file
+    path: logs/logins/login.log
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} | {({l}):5.5} | {f}:{L} — {m}{n}"
+    policy:
+      trigger:
+        kind: size
+        limit: 30 mb
+      roller:
+        kind: fixed_window
+        pattern: logs/logins/login_{}.gz
+        count: 5
+        base: 1
+
+  # Appender for the error logger
+  error-appender:
+    kind: rolling_file
+    path: logs/errors/error.log
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} | {({l}):5.5} | {f}:{L} — {m}{n}"
+    policy:
+      trigger:
+        kind: size
+        limit: 30 mb
+      roller:
+        kind: fixed_window
+        pattern: logs/errors/error_{}.gz
+        count: 5
+        base: 1
+
+  # Appender for the startup-shutdown logger
+  startup-shutdown-appender:
+    kind: rolling_file
+    path: logs/startup-shutdown/startup-shutdown.log
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} | {({l}):5.5} | {f}:{L} — {m}{n}"
+    policy:
+      trigger:
+        kind: size
+        limit: 30 mb
+      roller:
+        kind: fixed_window
+        pattern: logs/startup-shutdown/startup-shutdown_{}.gz
+        count: 5
+        base: 1
+
+root:
+  level: debug
+  appenders:
+    - stdout
+
+loggers:
+  post-logger:
+    level: info
+    appenders:
+      - post-appender
+  
+  login-logger:
+    level: info
+    appenders:
+      - login-appender
+
+  error-logger:
+    level: debug
+    appenders:
+      - error-appender
+  
+  startup-shutdown-logger:
+    level: debug
+    appenders:
+      - startup-shutdown-appender
