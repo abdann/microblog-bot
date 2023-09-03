@@ -8,7 +8,7 @@ pub struct Post<'a> {
 }
 
 #[derive(Debug, Serialize)]
-pub struct Login<'a> {
-    pub username: &'a str,
-    pub password: &'a str,
+pub struct Login {
+    pub username: String,
+    pub password: String,
 }

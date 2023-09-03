@@ -22,8 +22,10 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 pub struct Data {
     pub client: reqwest::Client,
     pub logged_in: Mutex<bool>,
-    pub credentials: Login<'static>,
+    pub credentials: Login,
     pub csrf_token: Mutex<Option<String>>,
+    pub login_endpoint: String,
+    pub post_endpoint: String,
 }
 
 async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
@@ -46,13 +48,16 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
 #[tokio::main]
 async fn main() {
     dotenv().expect("No .env file found");
-    lazy_static! {
-        static ref USERNAME: String = var("BLOG_USERNAME").expect("No username found");
-        static ref PASSWORD: String = var("BLOG_PASSWORD").expect("No password found");
-    }
+    let USERNAME = var("BLOG_USERNAME").expect("No username found");
+    let PASSWORD = var("BLOG_PASSWORD").expect("No password found");
+    let POST_ENDPOINT = var("POST_ENDPOINT").expect("No 'POST_ENDPOINT' found");
+    let LOGIN_ENDPOINT = var("LOGIN_ENDPOINT").expect("No 'LOGIN_ENDPOINT' found");
+    let HOSTNAME = var("BLOG_HOSTNAME").expect("No 'BLOG_HOSTNAME' found");
+    let SCHEME = var("SCHEME").expect("No 'SCHEME' found");
+
     let login_info = Login {
-        username: USERNAME.as_str(),
-        password: PASSWORD.as_str(),
+        username: USERNAME,
+        password: PASSWORD,
     };
     log4rs::init_file("log4rs-config.yml", Default::default())
         .expect("Failed to initialize log4rs from config file.");
@@ -84,6 +89,8 @@ async fn main() {
                     logged_in: Mutex::new(false),
                     credentials: login_info,
                     csrf_token: Mutex::new(None),
+                    login_endpoint: format!("{}://{}{}", &SCHEME, &HOSTNAME, &LOGIN_ENDPOINT),
+                    post_endpoint: format!("{}://{}{}", &SCHEME, &HOSTNAME, &POST_ENDPOINT),
                 })
             })
         })

@@ -80,13 +80,12 @@ pub async fn microblog(
     let response = ctx
         .data()
         .client
-        .post("http://127.0.0.1:8000/webhook/microblog/")
+        .post(&ctx.data().post_endpoint)
         .header(reqwest::header::CONTENT_TYPE, "application/json")
         .header("X-CSRFToken", csrf_token.as_ref().unwrap())
         .json(&post)
         .send()
         .await?;
-    println!("{:?}", response);
     let log = log_post(&title, &body, ctx).await;
     info!(target: "post-logger", "{}", &log);
     ctx.say("Blog post created!.").await?;
@@ -96,11 +95,10 @@ pub async fn microblog(
 /// Login the bot
 pub async fn login(ctx: Context<'_>) -> Result<(), Error> {
     let login = &ctx.data().credentials;
-    println!("{}", serde_json::to_string(login)?);
     let response = ctx
         .data()
         .client
-        .post("http://127.0.0.1:8000/login/")
+        .post(&ctx.data().login_endpoint)
         .header(reqwest::header::CONTENT_TYPE, "application/json")
         .json(&login)
         .send()
@@ -110,8 +108,6 @@ pub async fn login(ctx: Context<'_>) -> Result<(), Error> {
         .find(|cookie| cookie.name() == "csrftoken")
         .unwrap();
     let csrftoken = csrftoken_cookie.value();
-    println!("{:?}", csrftoken);
-    println!("{:?}", &response);
     {
         let mut logged_in = ctx.data().logged_in.lock().await;
         *logged_in = true;
