@@ -5,7 +5,6 @@ mod json_models;
 
 use dotenvy::dotenv;
 use json_models::Login;
-use lazy_static::lazy_static;
 use log::{error, info};
 use poise::serenity_prelude as serenity;
 use std::{env::var, time::Duration};
@@ -26,6 +25,7 @@ pub struct Data {
     pub csrf_token: Mutex<Option<String>>,
     pub login_endpoint: String,
     pub post_endpoint: String,
+    pub domain: String,
 }
 
 async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
@@ -82,7 +82,7 @@ async fn main() {
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                 Ok(Data {
                     client: reqwest::ClientBuilder::new()
-                        .https_only(false)
+                        .https_only(true)
                         .cookie_store(true)
                         .build()
                         .expect("Unable to build client"),
@@ -91,6 +91,7 @@ async fn main() {
                     csrf_token: Mutex::new(None),
                     login_endpoint: format!("{}://{}{}", &SCHEME, &HOSTNAME, &LOGIN_ENDPOINT),
                     post_endpoint: format!("{}://{}{}", &SCHEME, &HOSTNAME, &POST_ENDPOINT),
+                    domain: format!("{}://{}", &SCHEME, &HOSTNAME),
                 })
             })
         })

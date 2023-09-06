@@ -83,6 +83,7 @@ pub async fn microblog(
         .post(&ctx.data().post_endpoint)
         .header(reqwest::header::CONTENT_TYPE, "application/json")
         .header("X-CSRFToken", csrf_token.as_ref().unwrap())
+        .header(reqwest::header::REFERER, &ctx.data().domain)
         .json(&post)
         .send()
         .await?;

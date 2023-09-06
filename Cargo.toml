@@ -11,7 +11,18 @@ lazy_static = "1.4.0"
 log = "0.4.19"
 log4rs = { version = "1.2.0", features = ["gzip"] }
 poise = "0.5.5"
-reqwest = { version = "0.11.20", features = ["cookies", "cookie_store", "json"] }
+reqwest = { version = "0.11.20", default_features = false, features = [
+    "__rustls",
+    "cookie_crate",
+    "cookies",
+    "cookie_store",
+    "json",
+    "rustls-tls-native-roots",
+    "hyper-rustls",
+    "rustls",
+    "tokio-rustls",
+    "serde_json",
+] }
 serde = { version = "1.0.188", features = ["derive"] }
 serde_json = "1.0.105"
 tokio = { version = "1.29.1", features = ["rt-multi-thread", "signal"] }
