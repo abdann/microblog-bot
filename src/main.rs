@@ -47,7 +47,13 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
 
 #[tokio::main]
 async fn main() {
-    dotenv().expect("No .env file found");
+    let in_container = var("IN_CONTAINER")
+        .unwrap_or("false".into())
+        .parse::<bool>()
+        .expect("Environment variable 'IN_CONTAINER' must be either 'true' or 'false'");
+    if !in_container {
+        dotenv().expect("No .env file found");
+    }
     let username = var("BLOG_USERNAME").expect("No username found");
     let password = var("BLOG_PASSWORD").expect("No password found");
     let post_endpoint = var("POST_ENDPOINT").expect("No 'POST_ENDPOINT' found");
