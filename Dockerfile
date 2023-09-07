@@ -44,4 +44,5 @@ COPY --from=builder /microblogbot/target/x86_64-unknown-linux-musl/release/micro
 # Use an unprivileged user.
 USER microblogbot:microblogbot
 
+ENV IN_CONTAINER='true'
 CMD ["/microblogbot/microblog-bot"]
