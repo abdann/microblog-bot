@@ -1,4 +1,9 @@
 appenders:
+  stdout:
+    kind: console
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} | {({l}):5.5} | {f}:{L} — {m}{n}"
+
   # Appender for the post logger
   post-appender:
     kind: rolling_file
@@ -62,28 +67,32 @@ appenders:
         count: 5
         base: 1
 
-root:
-  level: debug
-  appenders:
-    - stdout
+# root:
+#   level: debug
+#   appenders:
+#     - stdout
 
 loggers:
   post-logger:
     level: info
     appenders:
       - post-appender
+      - stdout
   
   login-logger:
     level: info
     appenders:
       - login-appender
+      - stdout
 
   error-logger:
     level: debug
     appenders:
       - error-appender
+      - stdout
   
   startup-shutdown-logger:
     level: debug
     appenders:
       - startup-shutdown-appender
+      - stdout
