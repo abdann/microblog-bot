@@ -77,7 +77,7 @@ pub async fn microblog(
         }
     }
     let csrf_token = ctx.data().csrf_token.lock().await;
-    let response = ctx
+    let _response = ctx
         .data()
         .client
         .post(&ctx.data().post_endpoint)

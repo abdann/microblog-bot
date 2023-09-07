@@ -48,17 +48,14 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
 #[tokio::main]
 async fn main() {
     dotenv().expect("No .env file found");
-    let USERNAME = var("BLOG_USERNAME").expect("No username found");
-    let PASSWORD = var("BLOG_PASSWORD").expect("No password found");
-    let POST_ENDPOINT = var("POST_ENDPOINT").expect("No 'POST_ENDPOINT' found");
-    let LOGIN_ENDPOINT = var("LOGIN_ENDPOINT").expect("No 'LOGIN_ENDPOINT' found");
-    let HOSTNAME = var("BLOG_HOSTNAME").expect("No 'BLOG_HOSTNAME' found");
-    let SCHEME = var("SCHEME").expect("No 'SCHEME' found");
+    let username = var("BLOG_USERNAME").expect("No username found");
+    let password = var("BLOG_PASSWORD").expect("No password found");
+    let post_endpoint = var("POST_ENDPOINT").expect("No 'POST_ENDPOINT' found");
+    let login_endpoint = var("LOGIN_ENDPOINT").expect("No 'LOGIN_ENDPOINT' found");
+    let hostname = var("BLOG_HOSTNAME").expect("No 'BLOG_HOSTNAME' found");
+    let scheme = var("SCHEME").expect("No 'SCHEME' found");
 
-    let login_info = Login {
-        username: USERNAME,
-        password: PASSWORD,
-    };
+    let login_info = Login { username, password };
     log4rs::init_file("log4rs-config.yml", Default::default())
         .expect("Failed to initialize log4rs from config file.");
     let options = poise::FrameworkOptions {
@@ -89,9 +86,9 @@ async fn main() {
                     logged_in: Mutex::new(false),
                     credentials: login_info,
                     csrf_token: Mutex::new(None),
-                    login_endpoint: format!("{}://{}{}", &SCHEME, &HOSTNAME, &LOGIN_ENDPOINT),
-                    post_endpoint: format!("{}://{}{}", &SCHEME, &HOSTNAME, &POST_ENDPOINT),
-                    domain: format!("{}://{}", &SCHEME, &HOSTNAME),
+                    login_endpoint: format!("{}://{}{}", &scheme, &hostname, &login_endpoint),
+                    post_endpoint: format!("{}://{}{}", &scheme, &hostname, &post_endpoint),
+                    domain: format!("{}://{}", &scheme, &hostname),
                 })
             })
         })
