@@ -1,10 +1,15 @@
 # Microblog-bot
 A discord bot that lets you upload blog posts to your blog
 
+# Supported platforms:
+While this project can be built for theoretically any platform via `cargo build`, it has only been tested to work on linux amd64 and linux arm64.
+
 ## Deploying using docker compose
+The Dockerfile included provides support for running on linux amd64 and linux arm64 hosts.
+
 Prerequisites:
 - Docker CLI
-- Docker compose
+- Docker compose plugin
 
 1. Clone this repository: `git clone https://github.com/abdann/microblog-bot.git`
 2. Build the docker image (**IMPORTANT**: If you're building for a different target platform, make sure you add the flag `--platform <PLATFORM>` to target the correct host operating system instead of the build host's platform.): `cd microblog-bot; docker buildx build --tag abdann/microblogbot:latest .`
