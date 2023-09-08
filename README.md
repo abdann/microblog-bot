@@ -40,7 +40,7 @@ services:
       - ./logs/:/microblogbot/logs/
 ```
 
-**IMPORTANT**: Make sure to replace the things with angle brackets with the correct information as necessary for your configuration (ex: `<USERNAME>` becomes microblog)
+**IMPORTANT**: Make sure to replace the things with angle brackets with the correct information as necessary for your configuration (ex: `<USERNAME>` becomes `microblog`)
 5. Make another file called `.env` and copy the following into it:
 ```
 USER_ID=1000
