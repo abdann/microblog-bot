@@ -4,4 +4,3 @@ logs
 target
 Dockerfile
 Cargo.lock
-log4rs-config.yml
