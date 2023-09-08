@@ -40,6 +40,7 @@ WORKDIR /microblogbot
 
 # Copy our build
 COPY --from=builder /microblogbot/target/x86_64-unknown-linux-musl/release/microblog-bot ./
+COPY /log4rs-config.yml .
 
 # Use an unprivileged user.
 USER microblogbot:microblogbot
