@@ -7,7 +7,7 @@ Prerequisites:
 - Docker compose
 
 1. Clone this repository: `git clone https://github.com/abdann/microblog-bot.git`
-2. Build the docker image: `cd microblog-bot; docker buildx build --tag abdann/microblogbot:latest .`
+2. Build the docker image (**IMPORTANT**: If you're building for a different target platform, make sure you add the flag `--platform <PLATFORM>` to target the correct host operating system instead of the build host's platform.): `cd microblog-bot; docker buildx build --tag abdann/microblogbot:latest .`
 3. Make a new directory to store the bot's data and configuration files: `cd ..; mkdir microblog-docker; cd microblog-docker`
 4. Make a new file called `docker-compose.yml` and copy the following into it:
 
