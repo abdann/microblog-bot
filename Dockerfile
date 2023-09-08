@@ -93,8 +93,8 @@ COPY --from=builder /etc/group /etc/group
 WORKDIR /microblogbot
 
 # Copy our build
-COPY --from=builder /microblogbot/target/release/microblog-bot ./
-COPY /log4rs-config.yml .
+COPY --from=builder /microblogbot/target/release/microblog-bot .
+COPY log4rs-config.yml .
 
 # Use an unprivileged user.
 USER microblogbot:microblogbot
