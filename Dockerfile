@@ -1,9 +1,9 @@
 ####################################################################################################
 ## Builder
 ####################################################################################################
-FROM --platform=${BUILDPLATFORM} rust:latest AS build
+FROM --platform=${BUILDPLATFORM} rust:latest AS builder
 ARG TARGETPLATFORM
-RUN apt update && apt install -y musl-tools musl-dev
+RUN apt update && apt install -y musl-tools musl-dev llvm clang
 RUN update-ca-certificates
 
 # Create appuser
@@ -22,8 +22,14 @@ RUN adduser \
 WORKDIR /microblogbot
 
 COPY . .
+# Magic environment variables to get "ring" to cross compile
+# See https://github.com/briansmith/ring/issues/1414
+ENV CC_aarch64_unknown_linux_musl=clang
+ENV AR_aarch64_unknown_linux_musl=llvm-ar
+ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld"
+
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=x86_64; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=aarch64; else ARCHITECTURE=x86_64; fi \
-    && cargo build --release --target ${ARCHITECTURE}-unknown-linux-musl && mv target/${ARCHITECTURE}-unknown-linux-musl/release/microblog-bot .
+    && rustup target add ${ARCHITECTURE}-unknown-linux-musl && cargo build --release --target ${ARCHITECTURE}-unknown-linux-musl && mv target/${ARCHITECTURE}-unknown-linux-musl/release/microblog-bot .
 ####################################################################################################
 ## Final
 ####################################################################################################
@@ -36,7 +42,7 @@ COPY --from=builder /etc/group /etc/group
 WORKDIR /microblogbot
 
 # Copy our build
-COPY --from=builder microblog-bot .
+COPY --from=builder /microblogbot/microblog-bot .
 COPY log4rs-config.yml .
 
 # Use an unprivileged user.
