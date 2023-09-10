@@ -89,7 +89,20 @@ pub async fn microblog(
         .await?;
     let log = log_post(&title, &body, ctx).await;
     info!(target: "post-logger", "{}", &log);
-    ctx.say("Blog post created!.").await?;
+    reply_with_post(ctx, post).await?;
+    Ok(())
+}
+
+pub async fn reply_with_post(ctx: Context<'_>, post: Post<'_>) -> Result<(), Error> {
+    poise::send_reply(ctx, |f| {
+        f.embed(|f| {
+            f.author(|f| f.name(post.tag))
+                .description(post.body)
+                .title(post.title)
+        })
+        .content("Blog post created!")
+    })
+    .await?;
     Ok(())
 }
 
