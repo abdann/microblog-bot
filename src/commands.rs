@@ -1,4 +1,4 @@
-use crate::{json_models::Post, Context, Error};
+use crate::{json_models::{Post, PostResponse}, Context, Error};
 use log::info;
 
 /// Generates a log of a post.
@@ -77,7 +77,7 @@ pub async fn microblog(
         }
     }
     let csrf_token = ctx.data().csrf_token.lock().await;
-    let _response = ctx
+    let response = ctx
         .data()
         .client
         .post(&ctx.data().post_endpoint)
@@ -87,20 +87,22 @@ pub async fn microblog(
         .json(&post)
         .send()
         .await?;
+    let post_response = response.json::<PostResponse>().await?;
+    let post_url = format!("{}{}", &ctx.data().domain, post_response.post_url);
     let log = log_post(&title, &body, ctx).await;
     info!(target: "post-logger", "{}", &log);
-    reply_with_post(ctx, post).await?;
+    reply_with_post(ctx, post, &post_url).await?;
     Ok(())
 }
 
-pub async fn reply_with_post(ctx: Context<'_>, post: Post<'_>) -> Result<(), Error> {
+pub async fn reply_with_post(ctx: Context<'_>, post: Post<'_>, post_url: &'_ str) -> Result<(), Error> {
     poise::send_reply(ctx, |f| {
         f.embed(|f| {
             f.author(|f| f.name(post.tag))
                 .description(post.body)
                 .title(post.title)
         })
-        .content("Blog post created!")
+        .content(format!("Blog post created! Visit {} to see it live!", post_url))
     })
     .await?;
     Ok(())
